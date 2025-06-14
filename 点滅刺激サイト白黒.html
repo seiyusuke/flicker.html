@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>白黒点滅＋ホバー赤枠</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: black;
+        }
+
+        .container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .square {
+            width: 100px;
+            height: 100px;
+            background-color: white;
+            position: absolute;
+            box-sizing: border-box;
+        }
+
+        /* 配置：上下左右に分けて中央から配置 */
+        #squareTop {
+            top: calc(50% - 200px);
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        #squareRight {
+            top: 50%;
+            right: calc(50% - 200px);
+            transform: translateY(-50%);
+        }
+
+        #squareBottom {
+            bottom: calc(50% - 200px);
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        #squareLeft {
+            top: 50%;
+            left: calc(50% - 200px);
+            transform: translateY(-50%);
+        }
+
+        /* ホバー時に赤い枠線 */
+        .square:hover {
+            border: 4px solid red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="squareTop" class="square"></div>
+        <div id="squareRight" class="square"></div>
+        <div id="squareBottom" class="square"></div>
+        <div id="squareLeft" class="square"></div>
+    </div>
+
+    <script>
+        // 白黒点滅制御関数
+        function createBlinker(id, frequency) {
+            const square = document.getElementById(id);
+            const interval = 1000 / (frequency * 2);  // 半周期（ms）
+            let lastTime = performance.now();
+            let isWhite = true;
+
+            function blink(currentTime) {
+                if (currentTime - lastTime >= interval) {
+                    square.style.backgroundColor = isWhite ? 'black' : 'white';
+                    isWhite = !isWhite;
+                    lastTime = currentTime;
+                }
+                requestAnimationFrame(blink);
+            }
+
+            requestAnimationFrame(blink);
+        }
+
+        // 各方向の正方形に周波数を割り当て
+        createBlinker('squareTop',    7);   // 7Hz
+        createBlinker('squareRight',  9);   // 9Hz
+        createBlinker('squareBottom', 11);  // 11Hz
+        createBlinker('squareLeft',   13);  // 13Hz
+    </script>
+</body>
+</html>
