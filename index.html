@@ -1,66 +1,67 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8" />
-    <title>白黒点滅刺激（CSSアニメーション）</title>
-    <style>
-        body {
-            margin: 0;
-            background-color: black;
-        }
-
-        .container {
-            position: relative;
-            width: 100vw;
-            height: 100vh;
-        }
-
-        .square {
-            width: 100px;
-            height: 100px;
-            background-color: white;
-            position: absolute;
-            /* 点滅の基本は白→黒→白なのでアニメーション設定 */
-            animation-name: blink;
-            animation-iteration-count: infinite;
-            animation-timing-function: linear;
-        }
-
-        /* 4か所の配置 */
-        #squareTop    { top: 10%;  left: 50%; transform: translateX(-50%); }
-        #squareRight  { top: 50%;  right: 10%; transform: translateY(-50%); }
-        #squareBottom { bottom: 10%; left: 50%; transform: translateX(-50%); }
-        #squareLeft   { top: 50%;  left: 10%; transform: translateY(-50%); }
-
-        /* 点滅のkeyframes (白→黒→白) */
-        @keyframes blink {
-            0%   { background-color: white; }
-            50%  { background-color: black; }
-            100% { background-color: white; }
-        }
-
-        /* 周波数ごとに周期を変える(秒数 = 1 / 周波数) */
-        /* 周波数 f Hz の周期は T = 1/f 秒なので、1周期で白黒白を一回ずつ */
-        #squareTop    { animation-duration: calc(1s / 7 * 2); }   /* 7Hz → 1周期約0.142857秒、半周期は0.0714秒、 2倍してanimation-duration */
-        #squareRight  { animation-duration: calc(1s / 9 * 2); }   /* 9Hz */
-        #squareBottom { animation-duration: calc(1s / 11 * 2); }  /* 11Hz */
-        #squareLeft   { animation-duration: calc(1s / 13 * 2); }  /* 13Hz */
-
-        /* calc()がうまく動かないブラウザもあるので具体値でもOK */
-        /*
-        #squareTop    { animation-duration: 0.2857s; }
-        #squareRight  { animation-duration: 0.2222s; }
-        #squareBottom { animation-duration: 0.1818s; }
-        #squareLeft   { animation-duration: 0.1538s; }
-        */
-    </style>
+<meta charset="UTF-8" />
+<title>iPhone向け点滅刺激</title>
+<style>
+  body { margin: 0; background: black; }
+  .container {
+    position: relative; width: 100vw; height: 100vh;
+  }
+  .square {
+    width: 100px; height: 100px; position: absolute;
+    background: white;
+  }
+  #squareTop    { top: 10%;  left: 50%;  transform: translateX(-50%); }
+  #squareRight  { top: 50%;  right: 10%; transform: translateY(-50%); }
+  #squareBottom { bottom: 10%; left: 50%;  transform: translateX(-50%); }
+  #squareLeft   { top: 50%;  left: 10%;  transform: translateY(-50%); }
+</style>
 </head>
 <body>
-    <div class="container">
-        <div id="squareTop" class="square"></div>
-        <div id="squareRight" class="square"></div>
-        <div id="squareBottom" class="square"></div>
-        <div id="squareLeft" class="square"></div>
-    </div>
+<div class="container">
+  <div id="squareTop" class="square"></div>
+  <div id="squareRight" class="square"></div>
+  <div id="squareBottom" class="square"></div>
+  <div id="squareLeft" class="square"></div>
+</div>
+
+<script>
+  // 60Hz想定、1フレーム約16.67ms
+  const FRAME_TIME_MS = 1000 / 60;
+
+  // 点滅周波数
+  const stimuli = [
+    { id: 'squareTop',    freq: 7 },
+    { id: 'squareRight',  freq: 9 },
+    { id: 'squareBottom', freq: 11 },
+    { id: 'squareLeft',   freq: 13 },
+  ];
+
+  stimuli.forEach(({id, freq}) => {
+    const element = document.getElementById(id);
+    // 1周期のフレーム数（白→黒→白） = 60 / freq
+    const cycleFrames = Math.round(60 / freq);
+    // 半周期フレーム数（色切り替え間隔）
+    const halfCycleFrames = Math.floor(cycleFrames / 2);
+
+    let frameCount = 0;
+    let isWhite = true;
+
+    function blink() {
+      frameCount++;
+      if (frameCount >= halfCycleFrames) {
+        // 色を切り替え
+        isWhite = !isWhite;
+        element.style.backgroundColor = isWhite ? 'white' : 'black';
+        frameCount = 0;
+      }
+      requestAnimationFrame(blink);
+    }
+
+    blink();
+  });
+</script>
 </body>
 </html>
+
