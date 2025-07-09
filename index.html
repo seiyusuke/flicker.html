@@ -1,91 +1,66 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>CSSだけで点滅刺激</title>
-  <style>
-    body {
-      margin: 0;
-      background-color: black;
-    }
+    <meta charset="UTF-8" />
+    <title>白黒点滅刺激（CSSアニメーション）</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: black;
+        }
 
-    .container {
-      position: relative;
-      width: 100vw;
-      height: 100vh;
-    }
+        .container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
 
-    .square {
-      width: 100px;
-      height: 100px;
-      background-color: white;
-      position: absolute;
-      animation-iteration-count: infinite;
-      animation-timing-function: linear;
-    }
+        .square {
+            width: 100px;
+            height: 100px;
+            background-color: white;
+            position: absolute;
+            /* 点滅の基本は白→黒→白なのでアニメーション設定 */
+            animation-name: blink;
+            animation-iteration-count: infinite;
+            animation-timing-function: linear;
+        }
 
-    /* 上下左右に配置 */
-    #squareTop {
-      top: 10%;
-      left: 50%;
-      transform: translateX(-50%);
-      animation-name: blink7Hz;
-      animation-duration: 0.143s;
-    }
+        /* 4か所の配置 */
+        #squareTop    { top: 10%;  left: 50%; transform: translateX(-50%); }
+        #squareRight  { top: 50%;  right: 10%; transform: translateY(-50%); }
+        #squareBottom { bottom: 10%; left: 50%; transform: translateX(-50%); }
+        #squareLeft   { top: 50%;  left: 10%; transform: translateY(-50%); }
 
-    #squareRight {
-      top: 50%;
-      right: 10%;
-      transform: translateY(-50%);
-      animation-name: blink9Hz;
-      animation-duration: 0.111s;
-    }
+        /* 点滅のkeyframes (白→黒→白) */
+        @keyframes blink {
+            0%   { background-color: white; }
+            50%  { background-color: black; }
+            100% { background-color: white; }
+        }
 
-    #squareBottom {
-      bottom: 10%;
-      left: 50%;
-      transform: translateX(-50%);
-      animation-name: blink11Hz;
-      animation-duration: 0.091s;
-    }
+        /* 周波数ごとに周期を変える(秒数 = 1 / 周波数) */
+        /* 周波数 f Hz の周期は T = 1/f 秒なので、1周期で白黒白を一回ずつ */
+        #squareTop    { animation-duration: calc(1s / 7 * 2); }   /* 7Hz → 1周期約0.142857秒、半周期は0.0714秒、 2倍してanimation-duration */
+        #squareRight  { animation-duration: calc(1s / 9 * 2); }   /* 9Hz */
+        #squareBottom { animation-duration: calc(1s / 11 * 2); }  /* 11Hz */
+        #squareLeft   { animation-duration: calc(1s / 13 * 2); }  /* 13Hz */
 
-    #squareLeft {
-      top: 50%;
-      left: 10%;
-      transform: translateY(-50%);
-      animation-name: blink13Hz;
-      animation-duration: 0.077s;
-    }
-
-    /* 各周波数の点滅（白↔黒）アニメーション */
-    @keyframes blink7Hz {
-      0%, 50%, 100% { background-color: white; }
-      25%, 75%      { background-color: black; }
-    }
-
-    @keyframes blink9Hz {
-      0%, 50%, 100% { background-color: white; }
-      25%, 75%      { background-color: black; }
-    }
-
-    @keyframes blink11Hz {
-      0%, 50%, 100% { background-color: white; }
-      25%, 75%      { background-color: black; }
-    }
-
-    @keyframes blink13Hz {
-      0%, 50%, 100% { background-color: white; }
-      25%, 75%      { background-color: black; }
-    }
-  </style>
+        /* calc()がうまく動かないブラウザもあるので具体値でもOK */
+        /*
+        #squareTop    { animation-duration: 0.2857s; }
+        #squareRight  { animation-duration: 0.2222s; }
+        #squareBottom { animation-duration: 0.1818s; }
+        #squareLeft   { animation-duration: 0.1538s; }
+        */
+    </style>
 </head>
 <body>
-  <div class="container">
-    <div id="squareTop" class="square"></div>
-    <div id="squareRight" class="square"></div>
-    <div id="squareBottom" class="square"></div>
-    <div id="squareLeft" class="square"></div>
-  </div>
+    <div class="container">
+        <div id="squareTop" class="square"></div>
+        <div id="squareRight" class="square"></div>
+        <div id="squareBottom" class="square"></div>
+        <div id="squareLeft" class="square"></div>
+    </div>
 </body>
 </html>
-
